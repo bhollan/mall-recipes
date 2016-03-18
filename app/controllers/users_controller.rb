@@ -10,11 +10,9 @@ class UsersController < Sinatra::Base
     set :session_secret, "secret"
   end
 
-
   get '/signup' do
     if is_logged_in
-      # erb :'/tweets/index'
-      redirect to '/tweets'
+      redirect to '/recipes'
     else
       erb :'users/create_user', layout: false
     end
@@ -26,25 +24,26 @@ class UsersController < Sinatra::Base
       redirect to '/signup'
     else
       session[:id] = @user.id
-      redirect to '/tweets'
+      redirect to '/recipes'
     end
   end
 
   get '/login' do
     if is_logged_in
-      redirect to '/tweets'
+      redirect to '/recipes'
     else
       erb :'users/login', layout: false
     end
   end
 
   post '/login' do
+    binding.pry
     @user = User.find_by(username: params[:username]).authenticate(params[:password])
     if !@user
       redirect to '/login'
     end
     session[:id] = @user.id
-    redirect to '/tweets'
+    redirect to '/recipes'
   end
 
   get '/logout' do
@@ -60,9 +59,8 @@ class UsersController < Sinatra::Base
     if !@user
       redirect to '/'
     else
-      @tweets = Tweet.where(user_id: @user.id)
-      # @tweets = ["hello!", "Bollocks!"]
-      erb :'/tweets/tweets'
+      @recipes = Recipe.where(user_id: @user.id)
+      erb :'/recipes/index'
     end
   end
 

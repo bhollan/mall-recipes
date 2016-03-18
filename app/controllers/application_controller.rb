@@ -13,10 +13,9 @@ class ApplicationController < Sinatra::Base
 
   get '/' do
     if !is_logged_in
-      # redirect to :'/signup'
       erb :'users/create_user', layout: false
     else
-      erb :'tweets/tweets'
+      erb :'recipes/index'
     end
   end
 

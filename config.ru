@@ -5,6 +5,8 @@ if ActiveRecord::Migrator.needs_migration?
 end
 
 use Rack::MethodOverride
-use TweetsController
 use UsersController
+use RecipesController
+use ReviewsController
+use IngredientsController
 run ApplicationController

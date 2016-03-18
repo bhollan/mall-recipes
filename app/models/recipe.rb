@@ -1,5 +1,6 @@
-class Tweet < ActiveRecord::Base
+class Recipe < ActiveRecord::Base
   belongs_to :user
-
-  validates :content, length: {in: 1..140}
+  has_many :reviews
+  has_many :recipe_ingredients
+  has_many :ingredients, through: :recipe_ingredients
 end
