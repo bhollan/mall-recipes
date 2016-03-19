@@ -12,11 +12,12 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
-    if !is_logged_in
-      erb :'users/create_user', layout: false
-    else
-      erb :'recipes/index'
-    end
+    # if !is_logged_in
+    #   erb :'users/create_user', layout: false
+    # else
+    #   erb :'recipes/index'
+    # end
+    "HELLO WORLD!!"
   end
 
 end
