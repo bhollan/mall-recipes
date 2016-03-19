@@ -1,4 +1,6 @@
+#mall-recipes "app"
 require './config/environment'
+# binding.pry
 
 class ApplicationController < Sinatra::Base
   extend Helper

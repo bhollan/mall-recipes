@@ -115,6 +115,7 @@ DEPENDENCIES
   database_cleaner!
   pg
   pry
+  rack
   rack-test
   rake
   require_all
@@ -124,3 +125,6 @@ DEPENDENCIES
   sinatra-activerecord
   thin
   tux
+
+BUNDLED WITH
+   1.11.2
