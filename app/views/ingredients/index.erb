@@ -1,0 +1,15 @@
+<h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<br><br>
+<form method='POST' action='/ingredients'>
+  <h4>View list of recipes...</h4>
+  <input type='radio' name='selection' value='with' checked>...with...</input><br>
+  <input type='radio' name='selection' value='without'>...without...</input><br><br>
+
+  <select name='ingredient_id'>
+    <option value=''>..choose an ingredient</option>
+    <% Ingredient.all.each do |list_ing|%>
+      <option id='ingredient_<%= list_ing.id %>' value='<%= list_ing.id %>'><%= list_ing.name %></option>
+    <% end %>
+  </select><br><br>
+  <input type='submit' value='Submit'>
+</form>

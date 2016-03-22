@@ -1,6 +1,5 @@
 #mall-recipes "app"
 require './config/environment'
-# binding.pry
 
 class ApplicationController < Sinatra::Base
   extend Helper
@@ -15,11 +14,11 @@ class ApplicationController < Sinatra::Base
 
   get '/' do
     if !is_logged_in
-      erb :'users/create_user', layout: false
+      erb :'users/create_user'
     else
-      erb :'recipes/index'
+      # erb :'recipes/index'
+      redirect '/recipes'
     end
-    # "HELLO WORLD!!"
   end
 
 end

@@ -11,19 +11,34 @@ class RecipesController < Sinatra::Base
   end
 
   get '/recipes' do
+    #list of all recipes ever
+    @recipes = Recipe.all
+    erb :'recipes/index'
+  end
+
+  get '/recipes/new' do
+    #start recipe creation process
     if !is_logged_in
       redirect to '/login'
     else
       @user = current_user
-      @recipes = Recipe.all
-      erb :'recipes/index'
+      erb :'recipes/pre_create_recipe'
     end
   end
 
-  get '/recipes/new' do
+  post '/recipes/new' do
+    #This is probably not best practice, but hey...
+    #
+    #recieve back num_of_ingredients and
+    #display proper recipe creation form
     if !is_logged_in
       redirect to '/login'
     else
+      if params[:num_of_ingredients]==""
+        @ingredients = 3
+      else
+        @ingredients = params[:num_of_ingredients]
+      end
       @user = current_user
       erb :'recipes/create_recipe'
     end
@@ -33,27 +48,40 @@ class RecipesController < Sinatra::Base
     if !is_logged_in
       redirect to '/login'
     else
-      @recipes = Recipe.create(user_id: current_user.id, content: params[:content])
-      if @recipes.id.nil?
+      @recipe = Recipe.create(params[:recipe])
+      if @recipe.id.nil?
         redirect to '/recipes/new'
       else
-        @user = current_user
-        redirect to "/recipes/#{@recipes.id}"
+        @recipe.update(user_id: current_user.id)
+        if !params[:new_ingredient][:name].empty?
+          new_ing = Ingredient.find_or_create_by(name: params[:new_ingredient][:name])
+          params[:new_recipe_ingredient][:ingredient_id] = new_ing.id
+          params[:recipe_ingredients].push(params[:new_recipe_ingredient])
+        end
+        @recipe.recipe_ingredients.build(params[:recipe_ingredients])
+        @recipe.save
+        redirect to "/recipes/#{@recipe.id}"
       end
     end
   end
 
-  get '/recipes/:id' do
-    @recipes = []
+  get '/recipes/mine' do
     if !is_logged_in
       redirect to '/login'
+    else
+      @user = current_user
+      @recipes = Recipe.where(user_id: @user.id)
+      erb :'recipes/index'
     end
-    @recipes.push(Recipe.find(params[:id]))
-    if @recipes.empty?
+  end
+
+  get '/recipes/:id' do
+    @recipe = Recipe.find_by(id: params[:id])
+    if @recipe.nil?
+      @recipes = Recipe.all
       redirect to '/recipes'
     end
-    @user = current_user
-    erb :'recipes/index'
+    erb :'recipes/show_recipe'
   end
 
   get '/recipes/:id/edit' do
@@ -61,19 +89,26 @@ class RecipesController < Sinatra::Base
       redirect to '/login'
     end
     @recipe = Recipe.find(params[:id])
-    #redirect non-recipe owning users to /recipes
     if current_user.id != @recipe.user_id
       redirect to '/recipes'
     end
+    @recipe_ingredients = RecipeIngredient.where(recipe_id: @recipe.id)
     erb :'recipes/edit_recipe'
   end
 
   patch '/recipes/:id' do
-    if params[:content].empty?
+    if params[:recipe][:directions].empty? || params[:recipe][:name].empty?
       redirect to "/recipes/#{params[:id]}/edit"
     end
     @recipe = Recipe.find(params[:id])
-    @recipe.update(content: params[:content])
+    @recipe.update(params[:recipe])
+    # if !params[:new_ingredient][:name].empty?
+    #   new_ing = Ingredient.find_or_create_by(name: params[:new_ingredient][:name])
+    #   params[:new_recipe_ingredient][:ingredient_id] = new_ing.id
+    #   @recipe.recipe_ingredients.build(params[:recipe_ingredients])
+    #   # params[:recipe_ingredients].push(params[:new_recipe_ingredient])
+    # end
+    # @recipe.save
     redirect to "/recipes/#{params[:id]}"
   end
 

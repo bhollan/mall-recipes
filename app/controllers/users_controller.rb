@@ -14,7 +14,7 @@ class UsersController < Sinatra::Base
     if is_logged_in
       redirect to '/recipes'
     else
-      erb :'users/create_user', layout: false
+      erb :'users/create_user'
     end
   end
 
@@ -24,7 +24,7 @@ class UsersController < Sinatra::Base
       redirect to '/signup'
     else
       session[:id] = @user.id
-      redirect to '/recipes'
+      redirect to '/recipes', notice: 'New user successfully created'
     end
   end
 
@@ -32,32 +32,34 @@ class UsersController < Sinatra::Base
     if is_logged_in
       redirect to '/recipes'
     else
-      erb :'users/login', layout: false
+      erb :'users/login'
     end
   end
 
   post '/login' do
-    binding.pry
-    @user = User.find_by(username: params[:username]).authenticate(params[:password])
+    @user = User.find_by(username: params[:username])
     if !@user
-      redirect to '/login'
+      redirect to '/login' # error: 'We couldn't find you.  Have you signed up?'
     end
+    @user.authenticate(params[:password])
     session[:id] = @user.id
     redirect to '/recipes'
   end
 
   get '/logout' do
     session.clear
-    redirect to '/login'
+    redirect to '/recipes'
   end
 
-  get '/users/:slug' do
-    if !is_logged_in
-      redirect to '/login'
-    end
-    @user = User.find_by_slug(params[:slug])
+  get '/users' do
+    @users = User.all
+    erb :'/users/index'
+  end
+
+  get '/users/:id' do
+    @user = User.find(params[:id])
     if !@user
-      redirect to '/'
+      redirect to '/users'
     else
       @recipes = Recipe.where(user_id: @user.id)
       erb :'/recipes/index'

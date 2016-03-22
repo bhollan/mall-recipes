@@ -1,1 +1,31 @@
-<h3>this is your tweet.</h3>
+<% if session[:notice] %>
+  <div><%= session[:notice] %>
+<% end %>
+<h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<h4><%= @recipe.name %> by <a href='/users/<%= @recipe.user.id %>'><%= @recipe.user.username if !@recipe.user.nil? %></a></h4>
+<ul>
+  <li>Cook time: <%= @recipe.cook_time_in_minutes %> min</li>
+  <li>Prep time:<%= @recipe.prep_time_in_minutes %> min</li>
+</ul>
+<!-- 'if' statement should be removed if validation is working properly -->
+<ul>
+  <% @recipe.recipe_ingredients.each do |entry| %>
+    <li><%= entry.quantity_value %> <%= entry.quantity_unit %> <%= entry.qualifier %> <%= entry.ingredient.name %></li>
+  <% end %>
+</ul>
+<h4>Directions:</h4>
+<p><%= @recipe.directions %><p>
+<br><br><br>
+<% if current_user.id == @recipe.user.id %>
+<form method='GET' action='/recipes/<%= @recipe.id %>/edit'>
+  <input type='submit' value='Edit'>
+</form>
+<form method='POST' action='/recipes/<%= @recipe.id %>/delete'>
+  <input type='hidden' id='hidden' name='_method' value='delete'>
+  <input type='submit' value='Delete'>
+</form>
+<% else %>
+<form method='GET' action='/recipes/<%= @recipe.id %>/review'>
+  <input type='submit' value='Review this recipe'>
+</form>
+<% end %>

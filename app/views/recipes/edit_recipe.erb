@@ -1,6 +1,44 @@
-<h3>Edit FWEET!</h3>
-<form method='POST' action='/tweets/<%= @tweet.id %>'>
-  <input type='text' id=':content' name='content' value='<%= @tweet.content %>'>
-  <input type='hidden' id='hidden' name='_method' value='PATCH'>
-  <input type='submit' id='submit' name='submit' value='Submit'>
+<h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<form method='POST' action='/recipes/<%= @recipe.id %>'>
+  <label for='recipe[name]'>Recipe Name:</label><br>
+  <input type='text' id='recipe[name]' name='recipe[name]' value='<%= @recipe.name %>'><br>
+  <label for='recipe[prep_time_in_minutes]'>Prep time (in minutes):</label><br>
+  <input type='number' id='recipe[prep_time_in_minutes]' name='recipe[prep_time_in_minutes]' value='<%= @recipe.prep_time_in_minutes %>'><br>
+  <label for='recipe[cook_time_in_minutes]'>Cooking time (in minutes):</label><br>
+  <input type='number' id='recipe[cook_time_in_minutes]' name='recipe[cook_time_in_minutes]' value='<%= @recipe.cook_time_in_minutes %>'><br>
+
+  <!-- each 'pre-known' ingredient -->
+  <p>Ingredients:</p>
+  <% @recipe_ingredients.each do |entry|%>
+    <input type='hidden' id='entry_id' name='recipe_ingredients[][entry_id]' value='<%= entry.id %>'>
+    <select id='<%= entry.id %>' name='recipe_ingredients[][ingredient_id]'>
+      <option id='delete_entry' name='delete_entry' value='0'>-Delete Ingredient Entry-</option>
+      <% Ingredient.all.each do |list_ing|%>
+        <option id='ingredient_id_<%= list_ing.id %>' value='<%= list_ing.id %>' <%= entry.ingredient_id==list_ing.id ? "selected" : "" %>><%= list_ing.name %></option>
+      <% end %>
+    </select><br>
+    <label for='quantity_value' >Number:</label>
+    <input type='number' id='quantity_value' name='recipe_ingredients[][quantity_value]' value='<%= entry.quantity_value %>'>
+    <label for='quantity_unit'>Unit:</label>
+    <input type='text' id='quantity_unit' name='recipe_ingredients[][quantity_unit]' value='<%= entry.quantity_unit %>'>
+    <label for='qualifier'>Qualifier:</label>
+    <input type='text' id='qualifier' name='recipe_ingredients[][qualifier]' value='<%= entry.qualifier %>'><br><br><br>
+  <% end %>
+
+  <!-- <new ingredient -->
+  <p>(unlisted ingredient):
+  <input type='text' name='new_ingredient[name]'></p>
+  <label for='quantity_value'>Number:</label>
+  <input type='number' id='quantity_value' name='new_recipe_ingredient[quantity_value]'>
+  <label for='quantity_unit'>Unit:</label>
+  <input type='text' id='quantity_unit' name='new_recipe_ingredient[quantity_unit]'>
+  <label for='qualifier'>Qualifier:</label>
+  <input type='text' id='qualifier' name='new_recipe_ingredient[qualifier]'><br><br><br>
+
+  <br><label for='recipe[directions'>Directions:</label><br>
+  <textarea rows='8' cols='80' id='recipe[directions]' name='recipe[directions]'><%= @recipe.directions %></textarea><br><br>
+  <!-- <I tried to use 'placeholder' here, but it didn't work for some reason.> -->
+  <input type='hidden' id='hidden' name='_method' value='patch'>
+  <input type='submit' id='submit' name='submit' value='Save'>
+  <!-- <ideally, there would be a 'save' button and a 'finished editing' button -->
 </form>

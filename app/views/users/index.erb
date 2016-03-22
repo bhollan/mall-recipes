@@ -1,0 +1,12 @@
+<h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<% @users.each do |user| %>
+  <a href='/users/<%= user.id %>'><h4><%= user.username %></h4></a>
+
+  <% if user.recipes %>
+    <ul>
+    <% user.recipes.each do |recipe| %>
+      <a href='/recipes/<%= recipe.id %>'><li><%= recipe.name %></li></a>
+    <% end %>
+    </ul>
+  <% end %>
+<% end %>

@@ -1,5 +1,42 @@
-<h3>FWEET!</h3>
-<form method='POST' action='/tweets'>
-  <input type='text' id=':content' name='content'>
+<h3>Huzzah! A new recipe!</h3>
+<form method='POST' action='/recipes'>
+  <% @ingredients ||= 3 %>
+  <label for='recipe[name]'>Recipe Name:</label><br>
+  <input type='text' id='recipe[name]' name='recipe[name]'><br>
+  <label for='recipe[prep_time_in_minutes]'>Prep time (in minutes):</label><br>
+  <input type='number' id='recipe[prep_time_in_minutes]' name='recipe[prep_time_in_minutes]'><br>
+  <label for='recipe[cook_time_in_minutes]'>Cooking time (in minutes):</label><br>
+  <input type='number' id='recipe[cook_time_in_minutes]' name='recipe[cook_time_in_minutes]'><br>
+  <!-- <each 'pre&#45;known' ingredient -->
+  <p>Ingredients:</p>
+  <% @ingredients.to_i.times do |recipe_index|%>
+    <select id='ingredient_<%= recipe_index %>' name='recipe_ingredients[][ingredient_id]'>
+      <option value=''>..choose an ingredient</option>
+      <% Ingredient.all.each do |list_ing|%>
+        <option id='ingredient_id_<%= list_ing.id %>' value='<%= list_ing.id %>'><%= list_ing.name %></option>
+      <% end %>
+    </select><br>
+    <label for='quantity_value'>Number:</label>
+    <input type='number' id='quantity_value' name='recipe_ingredients[][quantity_value]'>
+    <label for='quantity_unit'>Unit:</label>
+    <input type='text' id='quantity_unit' name='recipe_ingredients[][quantity_unit]'>
+    <label for='qualifier'>Qualifier:</label>
+    <input type='text' id='qualifier' name='recipe_ingredients[][qualifier]'><br><br><br>
+  <% end %>
+
+  <!-- <new ingredient -->
+  <p>(unlisted ingredient):
+  <input type='text' name='new_ingredient[name]'></p>
+  <label for='quantity_value'>Number:</label>
+  <input type='number' id='quantity_value' name='new_recipe_ingredient[quantity_value]'>
+  <label for='quantity_unit'>Unit:</label>
+  <input type='text' id='quantity_unit' name='new_recipe_ingredient[quantity_unit]'>
+  <label for='qualifier'>Qualifier:</label>
+  <input type='text' id='qualifier' name='new_recipe_ingredient[qualifier]'><br><br><br>
+
+
+  <br><label for='recipe[directions'>Directions:</label><br>
+  <textarea rows='8' cols='80' id='recipe[directions]' name='recipe[directions]'>...your recipe here</textarea><br><br>
+  <!-- <I tried to use 'placeholder' here, but it didn't work for some reason.> -->
   <input type='submit' id='submit' name='submit' value='Submit'>
 </form>
