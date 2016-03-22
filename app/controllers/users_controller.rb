@@ -10,7 +10,7 @@ class UsersController < Sinatra::Base
     set :session_secret, "secret"
   end
 
-  get '/signup' do
+  get '/signup/?' do
     if is_logged_in
       redirect to '/recipes'
     else
@@ -18,7 +18,7 @@ class UsersController < Sinatra::Base
     end
   end
 
-  post '/signup' do
+  post '/signup/?' do
     @user = User.create(username: params[:username], email: params[:email], password: params[:password])
     if @user.id.nil?
       redirect to '/signup'
@@ -28,7 +28,7 @@ class UsersController < Sinatra::Base
     end
   end
 
-  get '/login' do
+  get '/login/?' do
     if is_logged_in
       redirect to '/recipes'
     else
@@ -36,7 +36,7 @@ class UsersController < Sinatra::Base
     end
   end
 
-  post '/login' do
+  post '/login/?' do
     @user = User.find_by(username: params[:username])
     if !@user
       redirect to '/login' # error: 'We couldn't find you.  Have you signed up?'
@@ -46,17 +46,17 @@ class UsersController < Sinatra::Base
     redirect to '/recipes'
   end
 
-  get '/logout' do
+  get '/logout/?' do
     session.clear
     redirect to '/recipes'
   end
 
-  get '/users' do
+  get '/users/?' do
     @users = User.all
     erb :'/users/index'
   end
 
-  get '/users/:id' do
+  get '/users/:id/?' do
     @user = User.find(params[:id])
     if !@user
       redirect to '/users'

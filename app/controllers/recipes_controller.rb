@@ -10,23 +10,23 @@ class RecipesController < Sinatra::Base
     set :session_secret, "secret"
   end
 
-  get '/recipes' do
+  get '/recipes/?' do
     #list of all recipes ever
     @recipes = Recipe.all
     erb :'recipes/index'
   end
 
-  get '/recipes/new' do
+  get '/recipes/new/?' do
     #start recipe creation process
     if !is_logged_in
-      redirect to '/login'
+      redirect to '/login/?'
     else
       @user = current_user
       erb :'recipes/pre_create_recipe'
     end
   end
 
-  post '/recipes/new' do
+  post '/recipes/new/?' do
     #This is probably not best practice, but hey...
     #
     #recieve back num_of_ingredients and
@@ -44,7 +44,7 @@ class RecipesController < Sinatra::Base
     end
   end
 
-  post '/recipes' do
+  post '/recipes/?' do
     if !is_logged_in
       redirect to '/login'
     else
@@ -65,7 +65,7 @@ class RecipesController < Sinatra::Base
     end
   end
 
-  get '/recipes/mine' do
+  get '/recipes/mine/?' do
     if !is_logged_in
       redirect to '/login'
     else
@@ -75,7 +75,7 @@ class RecipesController < Sinatra::Base
     end
   end
 
-  get '/recipes/:id' do
+  get '/recipes/:id/?' do
     @recipe = Recipe.find_by(id: params[:id])
     if @recipe.nil?
       @recipes = Recipe.all
@@ -84,7 +84,7 @@ class RecipesController < Sinatra::Base
     erb :'recipes/show_recipe'
   end
 
-  get '/recipes/:id/edit' do
+  get '/recipes/:id/edit/?' do
     if !is_logged_in
       redirect to '/login'
     end
@@ -96,7 +96,7 @@ class RecipesController < Sinatra::Base
     erb :'recipes/edit_recipe'
   end
 
-  patch '/recipes/:id' do
+  patch '/recipes/:id/?' do
     if params[:recipe][:directions].empty? || params[:recipe][:name].empty?
       redirect to "/recipes/#{params[:id]}/edit"
     end
@@ -112,7 +112,7 @@ class RecipesController < Sinatra::Base
     redirect to "/recipes/#{params[:id]}"
   end
 
-  delete '/recipes/:id/delete' do
+  delete '/recipes/:id/delete/?' do
     if !is_logged_in
       redirect to '/login'
     end

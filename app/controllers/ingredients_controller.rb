@@ -10,7 +10,7 @@ class IngredientsController < Sinatra::Base
     set :session_secret, "secret"
   end
 
-  get '/ingredients' do
+  get '/ingredients/?' do
     erb :'/ingredients/index'
   end
 
