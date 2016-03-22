@@ -14,7 +14,7 @@ test:
 production:
   url: <%= ENV['DATABASE_URL'] %>
   adapter: postgresql
-  host: localhost
+  host: 
   database: mall_recipes_production
   pool: 5
   timeout: 5000
