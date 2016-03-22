@@ -6,17 +6,16 @@
 
   <body>
     <header>
-      <h3>{<a href='/'>Home</a>}</h3>
-      <h4>{<a href='/recipes/mine'>My Recipes</a>(<a href='/recipes/new'>new</a>);(<a href='/logout'>logout</a>/<a href='/login'>login</a>)};  {<a href='/users'>Other cooks+recipes</a>};  {<a href='/recipes'>Recipes</a>};  {<a href='/ingredients'>Ingredients</a>};  {<a href='/reviews'>Reviews</a>};</h4>
+      <h3>{<a href='/'>Home</a>}</h3><img src='/Mallrats.png' style='width:100px; height:100px;'>
+      <h4>{<a href='/recipes/mine'>My Recipes</a>
+        (<a href='/recipes/new'>new</a>);
+        (<a href='/logout'>logout</a>/<a href='/login'>login</a>)};  
+        {<a href='/reviews/mine'>My Reviews</a>};
+        {<a href='/users'>Other cooks+recipes</a>};  
+        {<a href='/recipes'>Recipes</a>};  
+        {<a href='/ingredients'>Ingredients</a>};</h4>
     </header>
 
-    <%# <% binding.pry %>
-    <%# <% if flash[:notice] %>
-    <%#   <p class='alert alert-success'><%= flash[:notice] %>
-    <%# <% end %>
-    <%# <% if flash[:error] %>
-    <%#   <p class='alert alert-error'><%= flash[:error] %>
-    <%# <% end %>
     <%= yield %>
   </body>
 </html>

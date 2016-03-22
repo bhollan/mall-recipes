@@ -1,3 +1,11 @@
+<% if session[:notice] %>
+  <div><%= session[:notice] %></div>
+  <% session[:notice].clear %>
+<% end %>
+<% if session[:error] %>
+  <div><%= session[:error] %></div>
+  <% session[:error].clear %>
+<% end %>
 <h3>Login to Mall-Recipes!<h3>
 <br>
 <h4>No account? <a href='/signup'>Signup form</a></h4>

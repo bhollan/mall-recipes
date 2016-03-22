@@ -1,6 +1,6 @@
 development:
   adapter: postgresql
-  database: my_database_development
+  database: mall_recipes_development
   host: localhost
   pool: 5
   timeout: 5000
@@ -15,6 +15,6 @@ production:
   url: <%= ENV['DATABASE_URL'] %>
   adapter: postgresql
   host: localhost
-  database: my_database_production
+  database: mall_recipes_production
   pool: 5
   timeout: 5000

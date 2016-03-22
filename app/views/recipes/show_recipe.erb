@@ -16,7 +16,11 @@
 <h4>Directions:</h4>
 <p><%= @recipe.directions %><p>
 <br><br><br>
-<% if current_user.id == @recipe.user.id %>
+<% if current_user.nil? || current_user.id != @recipe.user.id %>
+<form method='GET' action='/recipes/<%= @recipe.id %>/review/create'>
+  <input type='submit' value='Review this recipe'>
+</form>
+<% elsif current_user.id == @recipe.user.id %>
 <form method='GET' action='/recipes/<%= @recipe.id %>/edit'>
   <input type='submit' value='Edit'>
 </form>
@@ -25,7 +29,18 @@
   <input type='submit' value='Delete'>
 </form>
 <% else %>
-<form method='GET' action='/recipes/<%= @recipe.id %>/review'>
-  <input type='submit' value='Review this recipe'>
-</form>
 <% end %>
+<br>
+<hr>
+<ul>
+<% @reviews.each do |review| %>
+  <li><%= review.user.username %> gave this <%= review.stars %> star(s) and said...</li>
+  <p>"<%= review.text %>"</p>
+  <% if current_user.id==review.user.id %>
+    <form method='POST' action='/review/<%= review.id %>/delete'>
+      <input type='hidden' id='hidden' name='_method' value='delete'>
+      <input type='submit' name='submit' value='Delete'>
+    </form
+  <% end %>
+<% end %>
+</ul>

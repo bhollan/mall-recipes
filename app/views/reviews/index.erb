@@ -1,0 +1,17 @@
+<% if session[:notice] %>
+  <div><%= session[:notice] %>
+<% end %>
+<h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<h4>You have reviewed...</h4>
+<ul>
+<% @reviews.each do |review| %>
+  <% @recipe = Recipe.find(review.recipe_id) %>
+  <li><strong><a href='/recipes/<%= @recipe.id  %>'><%= @recipe.name %></a> by
+      <a href='/users/<%= @recipe.user.id %>'><%= @recipe.user.username if !@recipe.user.nil? %></a></strong></li>
+  <p>You gave it <%= review.stars %> star(s) and said...</p>
+  <p>"<%= review.text %>"</p>
+  <!-- <remove 'if' statement later> -->
+<% end %>
+</ul>
+<br>
+<p>To delete a review, view the recipe.</p>

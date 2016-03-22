@@ -131,6 +131,3 @@ DEPENDENCIES
   sinatra-redirect-with-flash
   thin
   tux
-
-BUNDLED WITH
-   1.11.2

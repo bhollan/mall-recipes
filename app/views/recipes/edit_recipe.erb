@@ -1,4 +1,12 @@
 <h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<% if session[:notice] %>
+  <div><%= session[:notice] %></div>
+  <% session[:notice].clear %>
+<% end %>
+<% if session[:error] %>
+  <div><%= session[:error] %></div>
+  <% session[:error].clear %>
+<% end %>
 <form method='POST' action='/recipes/<%= @recipe.id %>'>
   <label for='recipe[name]'>Recipe Name:</label><br>
   <input type='text' id='recipe[name]' name='recipe[name]' value='<%= @recipe.name %>'><br>
@@ -10,9 +18,9 @@
   <!-- each 'pre-known' ingredient -->
   <p>Ingredients:</p>
   <% @recipe_ingredients.each do |entry|%>
-    <input type='hidden' id='entry_id' name='recipe_ingredients[][entry_id]' value='<%= entry.id %>'>
+    <input type='hidden' id='entry_id' name='recipe_ingredient_ids[][id]' value='<%= entry.id %>'>
     <select id='<%= entry.id %>' name='recipe_ingredients[][ingredient_id]'>
-      <option id='delete_entry' name='delete_entry' value='0'>-Delete Ingredient Entry-</option>
+      <option id='delete_entry' name='delete_entry' value='0'>-Delete This Entry-</option>
       <% Ingredient.all.each do |list_ing|%>
         <option id='ingredient_id_<%= list_ing.id %>' value='<%= list_ing.id %>' <%= entry.ingredient_id==list_ing.id ? "selected" : "" %>><%= list_ing.name %></option>
       <% end %>

@@ -1,6 +1,11 @@
 <h2>Welcome to Mall-Recipes!!</h2>
-<% if locals.empty? %>
-  <%= locals[:message] %>
+<% if session[:error] %>
+  <div><%= session[:error] %></div>
+  <% session[:error].clear %>
+<% end %>
+<% if session[:notice] %>
+  <div><%= session[:notice] %></div>
+  <% session[:notice].clear %>
 <% end %>
 <br>
 <h4>Signup / <a href='/login'>Sign in</a></h4>

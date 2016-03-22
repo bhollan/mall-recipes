@@ -1,0 +1,32 @@
+<% if session[:notice] %>
+  <div><%= session[:notice] %>
+<% end %>
+<h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
+<h4><%= @recipe.name %> by <a href='/users/<%= @recipe.user.id %>'><%= @recipe.user.username if !@recipe.user.nil? %></a></h4>
+<ul>
+  <li>Cook time: <%= @recipe.cook_time_in_minutes %> min</li>
+  <li>Prep time:<%= @recipe.prep_time_in_minutes %> min</li>
+</ul>
+<!-- 'if' statement should be removed if validation is working properly -->
+<ul>
+  <% @recipe.recipe_ingredients.each do |entry| %>
+    <li><%= entry.quantity_value %> <%= entry.quantity_unit %> <%= entry.qualifier %> <%= entry.ingredient.name %></li>
+  <% end %>
+</ul>
+<h4>Directions:</h4>
+<p><%= @recipe.directions %><p>
+<br><br><br>
+
+<h3><%= current_user.username %> is reviewing <%= @recipe.user.username %>'s <%= @recipe.name %> recipe.</h3>
+<form method='POST' action='/review/create'>
+  <input type='hidden' id='reviewer_id' name='user_id' value='<%= current_user.id %>'>
+  <input type='hidden' id='recipe_id' name='recipe_id' value='<%= @recipe.id %>'>
+  <select name='stars'>
+    <option>...stars</option>
+    <% 5.times do |index| %>
+      <option><%= index+1 %></option>
+    <% end %>
+  </select><br>
+  <textarea rows='8' cols='80' name='text'>...your review here</textarea><br>
+  <input type='submit' value='Submit Review'><br>
+</form>

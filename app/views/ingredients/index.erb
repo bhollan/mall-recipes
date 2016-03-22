@@ -1,3 +1,11 @@
+<% if session[:notice] %>
+  <div><%= session[:notice] %></div>
+  <% session[:notice].clear %>
+<% end %>
+<% if session[:error] %>
+  <div><%= session[:error] %></div>
+  <% session[:error].clear %>
+<% end %>
 <h3>Welcome to Mall-Recipes<%= ", #{current_user.username}" if is_logged_in %>!</h3>
 <br><br>
 <form method='POST' action='/ingredients'>

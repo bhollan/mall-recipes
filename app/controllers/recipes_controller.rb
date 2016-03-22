@@ -19,6 +19,7 @@ class RecipesController < Sinatra::Base
   get '/recipes/new/?' do
     #start recipe creation process
     if !is_logged_in
+      session[:error] = "You must be logged in to perform this action."
       redirect to '/login/?'
     else
       @user = current_user
@@ -32,6 +33,7 @@ class RecipesController < Sinatra::Base
     #recieve back num_of_ingredients and
     #display proper recipe creation form
     if !is_logged_in
+      session[:error] = "You must be logged in to perform this action."
       redirect to '/login'
     else
       if params[:num_of_ingredients]==""
@@ -45,20 +47,40 @@ class RecipesController < Sinatra::Base
   end
 
   post '/recipes/?' do
+    #this is the actual creat_recipe form
     if !is_logged_in
+      session[:error] = "You must be logged in to perform this action."
       redirect to '/login'
+    elsif params[:recipe][:directions].empty? || params[:recipe][:name].empty?
+      #user did not populate a required field
+      session[:error] = "Recipes must have a 'name' and 'directions'."
+      redirect to "/recipes/?"
     else
+      #find the recipe
       @recipe = Recipe.create(params[:recipe])
-      if @recipe.id.nil?
+      if @recipe.nil? || @recipe.id.nil?
+        session[:error] = "Something went wrong in recipe creation."
         redirect to '/recipes/new'
       else
+        #assign current user
         @recipe.update(user_id: current_user.id)
         if !params[:new_ingredient][:name].empty?
+          #create new ingredient from field
           new_ing = Ingredient.find_or_create_by(name: params[:new_ingredient][:name])
           params[:new_recipe_ingredient][:ingredient_id] = new_ing.id
+          if params[:recipe_ingredients].nil?
+            params[:recipe_ingredients] = []
+          end
           params[:recipe_ingredients].push(params[:new_recipe_ingredient])
         end
-        @recipe.recipe_ingredients.build(params[:recipe_ingredients])
+        if !params[:recipe_ingredients].nil?
+          #only build association if there are ingredients
+          params[:recipe_ingredients].each do |entry|
+            if !entry.nil?
+              @recipe.recipe_ingredients.build(entry)
+            end
+          end
+        end
         @recipe.save
         redirect to "/recipes/#{@recipe.id}"
       end
@@ -67,6 +89,7 @@ class RecipesController < Sinatra::Base
 
   get '/recipes/mine/?' do
     if !is_logged_in
+      session[:error] = "You must be logged in to perform this action."
       redirect to '/login'
     else
       @user = current_user
@@ -81,11 +104,13 @@ class RecipesController < Sinatra::Base
       @recipes = Recipe.all
       redirect to '/recipes'
     end
+    @reviews = Review.where(recipe_id: @recipe.id)
     erb :'recipes/show_recipe'
   end
 
   get '/recipes/:id/edit/?' do
     if !is_logged_in
+      session[:error] = "You must be logged in to perform this action."
       redirect to '/login'
     end
     @recipe = Recipe.find(params[:id])
@@ -98,29 +123,61 @@ class RecipesController < Sinatra::Base
 
   patch '/recipes/:id/?' do
     if params[:recipe][:directions].empty? || params[:recipe][:name].empty?
+      #user cleared a required field
+      session[:error] = "Recipes must have a 'name' and 'directions'."
       redirect to "/recipes/#{params[:id]}/edit"
     end
+    #find :id's recipe
     @recipe = Recipe.find(params[:id])
+    #this will have to change
     @recipe.update(params[:recipe])
-    # if !params[:new_ingredient][:name].empty?
-    #   new_ing = Ingredient.find_or_create_by(name: params[:new_ingredient][:name])
-    #   params[:new_recipe_ingredient][:ingredient_id] = new_ing.id
-    #   @recipe.recipe_ingredients.build(params[:recipe_ingredients])
-    #   # params[:recipe_ingredients].push(params[:new_recipe_ingredient])
-    # end
-    # @recipe.save
+    if !params[:recipe_ingredient_ids].empty?
+      #only do this with there are ingredients
+      params[:recipe_ingredient_ids].each_with_index do |entry_id_hash, i|
+        #find the entry, knowing the index
+        entry = RecipeIngredient.find_by(entry_id_hash)
+        binding.pry
+        if params[:recipe_ingredients][i][:ingredient_id]=="0"
+          #delete if marked by user to delete this entry
+          binding.pry
+          entry.delete
+        else
+          #otherwise, update it with the new info
+          binding.pry
+          entry.update(params[:recipe_ingredients][i])
+        end
+      end
+    end
+    if !params[:new_ingredient][:name].empty?
+      #deal with new ingredient if present
+      new_ing = Ingredient.find_or_create_by(name: params[:new_ingredient][:name])
+      params[:new_recipe_ingredient][:ingredient_id] = new_ing.id
+      @recipe.recipe_ingredients.build(params[:new_recipe_ingredient])
+    end
+    @recipe.save
+    session[:notice] = "Successfully updated recipe."
     redirect to "/recipes/#{params[:id]}"
   end
 
   delete '/recipes/:id/delete/?' do
     if !is_logged_in
+      #user is not logged in
+      session[:error] = "You must be logged in to perform this action."
       redirect to '/login'
     end
     @recipe = Recipe.find(params[:id])
     if @recipe.user_id != current_user.id
+      #current user is not recipe's author
+      session[:error] = "You can only delete your own recipes."
       redirect to '/recipes'
     end
+    @recipe.recipe_ingredients.each do |entry|
+      #we must delete all recipe_ingredient entries
+      entry.delete
+      #if we don't, listing recipes by ingredient will fail
+    end
     @recipe.destroy
+    session[:notice] = "Recipe successfully deleted."
     redirect to '/recipes'
   end
 
