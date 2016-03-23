@@ -136,14 +136,11 @@ class RecipesController < Sinatra::Base
       params[:recipe_ingredient_ids].each_with_index do |entry_id_hash, i|
         #find the entry, knowing the index
         entry = RecipeIngredient.find_by(entry_id_hash)
-        binding.pry
         if params[:recipe_ingredients][i][:ingredient_id]=="0"
           #delete if marked by user to delete this entry
-          binding.pry
           entry.delete
         else
           #otherwise, update it with the new info
-          binding.pry
           entry.update(params[:recipe_ingredients][i])
         end
       end
